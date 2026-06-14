@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { Text } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import PlannerScreen from '../screens/PlannerScreen';
+import InsightsScreen from '../screens/InsightsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import { colors } from '../constants/colors';
 
@@ -39,6 +40,15 @@ export default function AppNavigator() {
           options={{
             tabBarIcon: ({ color }) => (
               <Text style={{ fontSize: 20, color }}>📅</Text>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Insights"
+          component={InsightsScreen}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Text style={{ fontSize: 20, color }}>🧠</Text>
             ),
           }}
         />
