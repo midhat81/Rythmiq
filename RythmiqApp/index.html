@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rythmiq</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #080810;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .desktop-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .app-info {
+      color: white;
+      max-width: 300px;
+    }
+
+    .app-info h1 {
+      font-size: 42px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #7c6fff, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .app-info p {
+      font-size: 16px;
+      color: #8888aa;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #7c6fff22;
+      border: 1px solid #7c6fff44;
+      color: #7c6fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .phone-frame {
+      position: relative;
+      width: 320px;
+      height: 600px;
+      background: #1a1a2e;
+      border-radius: 50px;
+      border: 8px solid #2a2a4a;
+      box-shadow:
+        0 0 0 2px #0a0a1a,
+        0 40px 80px rgba(124, 111, 255, 0.3),
+        inset 0 0 20px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #1a1a2e;
+      border-radius: 0 0 20px 20px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 42px;
+      overflow: hidden;
+      border: none;
+    }
+
+    .phone-button {
+      position: absolute;
+      right: -10px;
+      top: 120px;
+      width: 4px;
+      height: 60px;
+      background: #2a2a4a;
+      border-radius: 2px;
+    }
+
+    .phone-button-left1 {
+      position: absolute;
+      left: -10px;
+      top: 100px;
+      width: 4px;
+      height: 40px;
+      background: #2a2a4a;
+      border-radius: 2px;
+    }
+
+    .phone-button-left2 {
+      position: absolute;
+      left: -10px;
+      top: 160px;
+      width: 4px;
+      height: 40px;
+      background: #2a2a4a;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="desktop-wrapper">
+
+    <!-- App Info -->
+    <div class="app-info">
+      <h1>Rythmiq</h1>
+      <p>Your personal AI life assistant. Weather-aware, energy-smart, and always one step ahead.</p>
+      <div>
+        <span class="badge">🧠 AI Powered</span>
+        <span class="badge">⛅ Weather Smart</span>
+        <span class="badge">🔋 Energy Tracker</span>
+        <span class="badge">📅 Daily Planner</span>
+        <span class="badge">🧬 Weather DNA</span>
+      </div>
+    </div>
+
+    <!-- Phone Frame -->
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-button"></div>
+      <div class="phone-button-left1"></div>
+      <div class="phone-button-left2"></div>
+      <iframe
+        class="phone-screen"
+        src="http://localhost:8081"
+        title="Rythmiq App"
+      ></iframe>
+    </div>
+
+  </div>
+
+</body>
+</html>

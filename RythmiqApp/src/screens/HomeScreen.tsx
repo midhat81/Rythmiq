@@ -31,127 +31,132 @@ export default function HomeScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
 
-      {/* Header */}
-      <LinearGradient
-        colors={[colors.gradientStart + '33', 'transparent']}
-        style={styles.header}
-      >
-        <Text style={styles.greeting}>{getGreeting()}</Text>
-        <Text style={styles.name}>Muhammad</Text>
-        <Text style={styles.date}>
-          {new Date().toLocaleDateString('en-US', {
-            weekday: 'long',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </Text>
-      </LinearGradient>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.greeting}>{getGreeting()}</Text>
+          <Text style={styles.name}>Muhammad</Text>
+          <Text style={styles.date}>
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </Text>
+        </View>
 
-      {/* Weather Card */}
-      <LinearGradient
-        colors={[colors.card, colors.cardGlow]}
-        style={styles.weatherCard}
-      >
-        <Text style={styles.cardLabel}>CURRENT WEATHER</Text>
-        {loading ? (
-          <ActivityIndicator color={colors.primary} size="large" />
-        ) : error ? (
-          <View>
-            <Text style={styles.errorText}>Failed to load weather</Text>
-            <TouchableOpacity onPress={refetch} style={styles.retryBtn}>
-              <Text style={styles.retryText}>Retry</Text>
-            </TouchableOpacity>
-          </View>
-        ) : weather ? (
-          <View>
-            <View style={styles.weatherMain}>
-              <Text style={styles.weatherEmoji}>
-                {getWeatherEmoji(weather.description)}
-              </Text>
+        {/* Weather + AI Row */}
+        <View style={styles.row}>
+
+          {/* Weather Card */}
+          <View style={styles.halfCard}>
+            <Text style={styles.cardLabel}>WEATHER</Text>
+            {loading ? (
+              <ActivityIndicator color={colors.primary} size="small" />
+            ) : weather ? (
               <View>
+                <Text style={styles.weatherEmoji}>
+                  {getWeatherEmoji(weather.description)}
+                </Text>
                 <Text style={styles.weatherTemp}>{weather.temp}°</Text>
                 <Text style={styles.weatherDesc}>{weather.description}</Text>
+                <Text style={styles.city}>📍 {weather.city}</Text>
               </View>
-            </View>
-            <View style={styles.weatherStats}>
-              <View style={styles.weatherStat}>
-                <Text style={styles.weatherStatValue}>{weather.humidity}%</Text>
-                <Text style={styles.weatherStatLabel}>Humidity</Text>
-              </View>
-              <View style={styles.weatherStat}>
-                <Text style={styles.weatherStatValue}>{weather.windSpeed}</Text>
-                <Text style={styles.weatherStatLabel}>Wind m/s</Text>
-              </View>
-              <View style={styles.weatherStat}>
-                <Text style={styles.weatherStatValue}>{weather.feelsLike}°</Text>
-                <Text style={styles.weatherStatLabel}>Feels Like</Text>
-              </View>
-            </View>
-            <Text style={styles.city}>📍 {weather.city}</Text>
+            ) : null}
           </View>
-        ) : null}
-      </LinearGradient>
 
-      {/* AI Decision Card */}
-      <LinearGradient
-        colors={decision?.shouldGoOut
-          ? [colors.success + '22', colors.card]
-          : [colors.danger + '22', colors.card]}
-        style={styles.card}
-      >
-        <Text style={styles.cardLabel}>AI DECISION</Text>
-        {decision ? (
-          <View>
-            <Text style={styles.shouldGoOut}>
-              {decision.shouldGoOut ? '✅ Go Outside!' : '🏠 Stay Indoors'}
-            </Text>
-            <Text style={styles.advice}>{decision.advice}</Text>
-            <View style={styles.timeWindowBox}>
-              <Text style={styles.timeWindowLabel}>⏰ Best Window</Text>
-              <Text style={styles.timeWindowValue}>{decision.bestTimeWindow}</Text>
-            </View>
+          {/* AI Decision Card */}
+          <View style={styles.halfCard}>
+            <Text style={styles.cardLabel}>AI SAYS</Text>
+            {decision ? (
+              <View>
+                <Text style={styles.shouldGoOutEmoji}>
+                  {decision.shouldGoOut ? '✅' : '🏠'}
+                </Text>
+                <Text style={[styles.shouldGoOutText, {
+                  color: decision.shouldGoOut ? colors.success : colors.danger
+                }]}>
+                  {decision.shouldGoOut ? 'Go Outside!' : 'Stay Indoors'}
+                </Text>
+                <Text style={styles.timeWindow}>
+                  ⏰ {decision.bestTimeWindow}
+                </Text>
+              </View>
+            ) : (
+              <ActivityIndicator color={colors.primary} size="small" />
+            )}
           </View>
-        ) : (
-          <ActivityIndicator color={colors.primary} />
-        )}
-      </LinearGradient>
 
-      {/* Warnings */}
-      {decision && decision.warnings.length > 0 && (
-        <View style={[styles.card, styles.warningCard]}>
-          <Text style={styles.cardLabel}>⚠️ WARNINGS</Text>
-          {decision.warnings.map((warning, index) => (
-            <Text key={index} style={styles.warningText}>{warning}</Text>
-          ))}
         </View>
-      )}
 
-      {/* Energy Card */}
-      <View style={styles.card}>
-        <Text style={styles.cardLabel}>ENERGY LEVEL</Text>
-        {decision ? (
-          <View>
-            <View style={styles.energyRow}>
-              <Text style={[styles.energyValue, { color: getEnergyColor(decision.energyLevel) }]}>
-                {decision.energyLevel}%
-              </Text>
-              <View style={styles.energyBar}>
-                <View style={[styles.energyFill, {
-                  width: `${decision.energyLevel}%` as any,
-                  backgroundColor: getEnergyColor(decision.energyLevel),
-                }]} />
-              </View>
+        {/* Weather Stats */}
+        {weather && (
+          <View style={styles.statsCard}>
+            <View style={styles.statBox}>
+              <Text style={styles.statEmoji}>💧</Text>
+              <Text style={styles.statValue}>{weather.humidity}%</Text>
+              <Text style={styles.statLabel}>Humidity</Text>
             </View>
-            <View style={styles.sleepRow}>
+            <View style={styles.statDivider} />
+            <View style={styles.statBox}>
+              <Text style={styles.statEmoji}>💨</Text>
+              <Text style={styles.statValue}>{weather.windSpeed}</Text>
+              <Text style={styles.statLabel}>Wind m/s</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statBox}>
+              <Text style={styles.statEmoji}>🌡️</Text>
+              <Text style={styles.statValue}>{weather.feelsLike}°</Text>
+              <Text style={styles.statLabel}>Feels Like</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Energy + Sleep Row */}
+        <View style={styles.row}>
+
+          {/* Energy Card */}
+          <View style={styles.halfCard}>
+            <Text style={styles.cardLabel}>ENERGY</Text>
+            {decision ? (
+              <View>
+                <Text style={[styles.energyValue, {
+                  color: getEnergyColor(decision.energyLevel)
+                }]}>
+                  {decision.energyLevel}%
+                </Text>
+                <View style={styles.energyBar}>
+                  <LinearGradient
+                    colors={[colors.primary, colors.purple]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.energyFill, {
+                      width: `${decision.energyLevel}%` as any
+                    }]}
+                  />
+                </View>
+                <Text style={styles.energyLabel}>
+                  {decision.energyLevel >= 80 ? 'High Energy 🔥' :
+                    decision.energyLevel >= 50 ? 'Moderate ⚡' : 'Low Energy 😴'}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+
+          {/* Sleep Card */}
+          <View style={styles.halfCard}>
+            <Text style={styles.cardLabel}>SLEEP</Text>
+            <Text style={styles.sleepValue}>😴</Text>
+            <Text style={styles.sleepHours}>{sleepHours}h</Text>
+            <View style={styles.sleepControls}>
               <TouchableOpacity
                 style={styles.sleepBtn}
                 onPress={() => setSleepHours(Math.max(0, sleepHours - 1))}
               >
                 <Text style={styles.sleepBtnText}>−</Text>
               </TouchableOpacity>
-              <Text style={styles.sleepHours}>😴 {sleepHours} hrs sleep</Text>
               <TouchableOpacity
                 style={styles.sleepBtn}
                 onPress={() => setSleepHours(Math.min(12, sleepHours + 1))}
@@ -160,24 +165,47 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        ) : null}
-      </View>
 
-      {/* Activities */}
-      <View style={styles.card}>
-        <Text style={styles.cardLabel}>RECOMMENDED FOR YOU</Text>
-        <View style={styles.activitiesGrid}>
-          {decision?.activities.map((activity, index) => (
-            <View key={index} style={styles.activityChip}>
-              <Text style={styles.activityText}>{activity}</Text>
-            </View>
-          ))}
         </View>
-      </View>
 
-      <View style={{ height: 20 }} />
+        {/* Warnings */}
+        {decision && decision.warnings.length > 0 && (
+          <View style={[styles.fullCard, { borderColor: colors.warning + '44' }]}>
+            <Text style={styles.cardLabel}>⚠️ WARNINGS</Text>
+            {decision.warnings.map((warning, index) => (
+              <Text key={index} style={styles.warningText}>{warning}</Text>
+            ))}
+          </View>
+        )}
 
-    </ScrollView>
+        {/* Activities */}
+        <View style={styles.fullCard}>
+          <Text style={styles.cardLabel}>🎯 RECOMMENDED</Text>
+          <View style={styles.activitiesGrid}>
+            {decision?.activities.map((activity, index) => (
+              <View key={index} style={[styles.activityChip, {
+                borderColor: index === 0 ? colors.primary :
+                  index === 1 ? colors.purple : colors.success,
+              }]}>
+                <Text style={[styles.activityText, {
+                  color: index === 0 ? colors.primary :
+                    index === 1 ? colors.purple : colors.success,
+                }]}>{activity}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* AI Advice */}
+        <View style={styles.fullCard}>
+          <Text style={styles.cardLabel}>🧠 AI ADVICE</Text>
+          <Text style={styles.adviceText}>{decision?.advice}</Text>
+        </View>
+
+        <View style={{ height: 100 }} />
+
+      </ScrollView>
+    </View>
   );
 }
 
@@ -187,176 +215,176 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   header: {
-    padding: 24,
-    paddingTop: 60,
-    paddingBottom: 30,
+    padding: 20,
+    paddingTop: 50,
+    paddingBottom: 20,
   },
   greeting: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    letterSpacing: 1,
-  },
-  name: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginTop: 4,
-  },
-  date: {
     fontSize: 14,
     color: colors.textMuted,
+    letterSpacing: 0.5,
+  },
+  name: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+    marginTop: 2,
+  },
+  date: {
+    fontSize: 13,
+    color: colors.textMuted,
     marginTop: 4,
   },
-  weatherCard: {
-    margin: 16,
-    borderRadius: 20,
-    padding: 24,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
+  row: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 12,
+    marginBottom: 12,
   },
-  card: {
-    margin: 16,
-    marginTop: 0,
-    borderRadius: 20,
-    padding: 24,
+  halfCard: {
+    flex: 1,
     backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 16,
     borderWidth: 1,
-    borderColor: colors.cardBorder,
+    borderColor: colors.glassBorder,
   },
-  warningCard: {
-    borderColor: colors.warning + '66',
-    backgroundColor: colors.warning + '11',
+  fullCard: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  statsCard: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   cardLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: colors.textMuted,
     letterSpacing: 2,
-    marginBottom: 12,
+    marginBottom: 10,
     fontWeight: '600',
   },
-  weatherMain: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginBottom: 16,
-  },
   weatherEmoji: {
-    fontSize: 56,
+    fontSize: 36,
+    marginBottom: 6,
   },
   weatherTemp: {
-    fontSize: 56,
+    fontSize: 36,
     fontWeight: 'bold',
     color: colors.textPrimary,
-    lineHeight: 60,
   },
   weatherDesc: {
-    fontSize: 16,
+    fontSize: 12,
     color: colors.textSecondary,
     textTransform: 'capitalize',
-  },
-  weatherStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: colors.background + '88',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-  },
-  weatherStat: {
-    alignItems: 'center',
-  },
-  weatherStatValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-  },
-  weatherStatLabel: {
-    fontSize: 11,
-    color: colors.textMuted,
     marginTop: 2,
   },
   city: {
-    fontSize: 13,
-    color: colors.primary,
-  },
-  shouldGoOut: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 8,
-  },
-  advice: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  timeWindowBox: {
-    backgroundColor: colors.primary + '22',
-    borderRadius: 10,
-    padding: 10,
-  },
-  timeWindowLabel: {
     fontSize: 11,
-    color: colors.textMuted,
-    letterSpacing: 1,
-  },
-  timeWindowValue: {
-    fontSize: 14,
     color: colors.primary,
-    fontWeight: '600',
-    marginTop: 2,
+    marginTop: 6,
   },
-  warningText: {
-    fontSize: 14,
-    color: colors.warning,
+  shouldGoOutEmoji: {
+    fontSize: 36,
     marginBottom: 6,
   },
-  energyRow: {
-    flexDirection: 'row',
+  shouldGoOutText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  timeWindow: {
+    fontSize: 10,
+    color: colors.textMuted,
+    lineHeight: 15,
+  },
+  statBox: {
     alignItems: 'center',
-    gap: 16,
-    marginBottom: 16,
+  },
+  statEmoji: {
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  statValue: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+  },
+  statLabel: {
+    fontSize: 10,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: colors.glassBorder,
   },
   energyValue: {
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: 'bold',
-    width: 80,
+    marginBottom: 8,
   },
   energyBar: {
-    flex: 1,
-    height: 8,
-    backgroundColor: colors.cardBorder,
-    borderRadius: 4,
+    height: 6,
+    backgroundColor: colors.glassBorder,
+    borderRadius: 3,
     overflow: 'hidden',
+    marginBottom: 8,
   },
   energyFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 3,
   },
-  sleepRow: {
+  energyLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+  },
+  sleepValue: {
+    fontSize: 32,
+    marginBottom: 2,
+  },
+  sleepHours: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+    marginBottom: 10,
+  },
+  sleepControls: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 16,
+    gap: 8,
   },
   sleepBtn: {
-    backgroundColor: colors.primary,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    backgroundColor: colors.glassBorder,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sleepBtnText: {
     color: colors.textPrimary,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
-  sleepHours: {
-    color: colors.textPrimary,
-    fontSize: 16,
-    fontWeight: '600',
+  warningText: {
+    fontSize: 13,
+    color: colors.warning,
+    marginBottom: 4,
+    lineHeight: 20,
   },
   activitiesGrid: {
     flexDirection: 'row',
@@ -364,31 +392,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   activityChip: {
-    backgroundColor: colors.primary + '22',
     borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
     borderWidth: 1,
-    borderColor: colors.primary + '44',
+    backgroundColor: colors.glassBorder + '44',
   },
   activityText: {
-    color: colors.primary,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
   },
-  errorText: {
-    color: colors.danger,
-    fontSize: 16,
-  },
-  retryBtn: {
-    marginTop: 10,
-    backgroundColor: colors.primary,
-    padding: 10,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  retryText: {
-    color: colors.textPrimary,
-    fontWeight: 'bold',
+  adviceText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 22,
   },
 });
