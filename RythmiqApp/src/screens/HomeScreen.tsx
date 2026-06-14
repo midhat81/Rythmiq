@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../constants/colors';
 import { useWeather } from '../hooks/useWeather';
 import { useAI } from '../hooks/useAI';
@@ -22,18 +23,38 @@ export default function HomeScreen() {
     return colors.danger;
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning ☀️';
+    if (hour < 17) return 'Good Afternoon 🌤️';
+    return 'Good Evening 🌙';
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Good Morning 👋</Text>
+      <LinearGradient
+        colors={[colors.gradientStart + '33', 'transparent']}
+        style={styles.header}
+      >
+        <Text style={styles.greeting}>{getGreeting()}</Text>
         <Text style={styles.name}>Muhammad</Text>
-      </View>
+        <Text style={styles.date}>
+          {new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </Text>
+      </LinearGradient>
 
       {/* Weather Card */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>⛅ Weather Now</Text>
+      <LinearGradient
+        colors={[colors.card, colors.cardGlow]}
+        style={styles.weatherCard}
+      >
+        <Text style={styles.cardLabel}>CURRENT WEATHER</Text>
         {loading ? (
           <ActivityIndicator color={colors.primary} size="large" />
         ) : error ? (
@@ -45,41 +66,62 @@ export default function HomeScreen() {
           </View>
         ) : weather ? (
           <View>
-            <Text style={styles.weatherEmoji}>
-              {getWeatherEmoji(weather.description)}
-            </Text>
-            <Text style={styles.weatherTemp}>{weather.temp}°C</Text>
-            <Text style={styles.weatherDesc}>{weather.description}</Text>
-            <Text style={styles.weatherDetails}>
-              💧 {weather.humidity}%  💨 {weather.windSpeed}m/s  🌡️ Feels {weather.feelsLike}°C
-            </Text>
+            <View style={styles.weatherMain}>
+              <Text style={styles.weatherEmoji}>
+                {getWeatherEmoji(weather.description)}
+              </Text>
+              <View>
+                <Text style={styles.weatherTemp}>{weather.temp}°</Text>
+                <Text style={styles.weatherDesc}>{weather.description}</Text>
+              </View>
+            </View>
+            <View style={styles.weatherStats}>
+              <View style={styles.weatherStat}>
+                <Text style={styles.weatherStatValue}>{weather.humidity}%</Text>
+                <Text style={styles.weatherStatLabel}>Humidity</Text>
+              </View>
+              <View style={styles.weatherStat}>
+                <Text style={styles.weatherStatValue}>{weather.windSpeed}</Text>
+                <Text style={styles.weatherStatLabel}>Wind m/s</Text>
+              </View>
+              <View style={styles.weatherStat}>
+                <Text style={styles.weatherStatValue}>{weather.feelsLike}°</Text>
+                <Text style={styles.weatherStatLabel}>Feels Like</Text>
+              </View>
+            </View>
             <Text style={styles.city}>📍 {weather.city}</Text>
           </View>
         ) : null}
-      </View>
+      </LinearGradient>
 
       {/* AI Decision Card */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>🧠 AI Decision</Text>
+      <LinearGradient
+        colors={decision?.shouldGoOut
+          ? [colors.success + '22', colors.card]
+          : [colors.danger + '22', colors.card]}
+        style={styles.card}
+      >
+        <Text style={styles.cardLabel}>AI DECISION</Text>
         {decision ? (
           <View>
             <Text style={styles.shouldGoOut}>
-              {decision.shouldGoOut ? '✅ Good to go outside!' : '🏠 Stay indoors today'}
+              {decision.shouldGoOut ? '✅ Go Outside!' : '🏠 Stay Indoors'}
             </Text>
             <Text style={styles.advice}>{decision.advice}</Text>
-            <Text style={styles.timeWindow}>
-              ⏰ Best time: {decision.bestTimeWindow}
-            </Text>
+            <View style={styles.timeWindowBox}>
+              <Text style={styles.timeWindowLabel}>⏰ Best Window</Text>
+              <Text style={styles.timeWindowValue}>{decision.bestTimeWindow}</Text>
+            </View>
           </View>
         ) : (
           <ActivityIndicator color={colors.primary} />
         )}
-      </View>
+      </LinearGradient>
 
-      {/* Warnings Card */}
+      {/* Warnings */}
       {decision && decision.warnings.length > 0 && (
         <View style={[styles.card, styles.warningCard]}>
-          <Text style={styles.cardTitle}>⚠️ Warnings</Text>
+          <Text style={styles.cardLabel}>⚠️ WARNINGS</Text>
           {decision.warnings.map((warning, index) => (
             <Text key={index} style={styles.warningText}>{warning}</Text>
           ))}
@@ -88,24 +130,28 @@ export default function HomeScreen() {
 
       {/* Energy Card */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>🔋 Your Energy Today</Text>
+        <Text style={styles.cardLabel}>ENERGY LEVEL</Text>
         {decision ? (
           <View>
-            <Text style={[styles.energy, { color: getEnergyColor(decision.energyLevel) }]}>
-              {decision.energyLevel}%
-            </Text>
-            <Text style={styles.energyDesc}>
-              Sleep: {sleepHours} hrs
-            </Text>
-            {/* Sleep adjuster */}
+            <View style={styles.energyRow}>
+              <Text style={[styles.energyValue, { color: getEnergyColor(decision.energyLevel) }]}>
+                {decision.energyLevel}%
+              </Text>
+              <View style={styles.energyBar}>
+                <View style={[styles.energyFill, {
+                  width: `${decision.energyLevel}%` as any,
+                  backgroundColor: getEnergyColor(decision.energyLevel),
+                }]} />
+              </View>
+            </View>
             <View style={styles.sleepRow}>
               <TouchableOpacity
                 style={styles.sleepBtn}
                 onPress={() => setSleepHours(Math.max(0, sleepHours - 1))}
               >
-                <Text style={styles.sleepBtnText}>-</Text>
+                <Text style={styles.sleepBtnText}>−</Text>
               </TouchableOpacity>
-              <Text style={styles.sleepHours}>{sleepHours} hrs sleep</Text>
+              <Text style={styles.sleepHours}>😴 {sleepHours} hrs sleep</Text>
               <TouchableOpacity
                 style={styles.sleepBtn}
                 onPress={() => setSleepHours(Math.min(12, sleepHours + 1))}
@@ -117,13 +163,19 @@ export default function HomeScreen() {
         ) : null}
       </View>
 
-      {/* Activities Card */}
+      {/* Activities */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>🎯 Recommended Activities</Text>
-        {decision?.activities.map((activity, index) => (
-          <Text key={index} style={styles.activity}>{activity}</Text>
-        ))}
+        <Text style={styles.cardLabel}>RECOMMENDED FOR YOU</Text>
+        <View style={styles.activitiesGrid}>
+          {decision?.activities.map((activity, index) => (
+            <View key={index} style={styles.activityChip}>
+              <Text style={styles.activityText}>{activity}</Text>
+            </View>
+          ))}
+        </View>
       </View>
+
+      <View style={{ height: 20 }} />
 
     </ScrollView>
   );
@@ -133,63 +185,102 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    padding: 20,
   },
   header: {
-    marginTop: 60,
-    marginBottom: 30,
+    padding: 24,
+    paddingTop: 60,
+    paddingBottom: 30,
   },
   greeting: {
     fontSize: 16,
     color: colors.textSecondary,
+    letterSpacing: 1,
   },
   name: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: colors.textPrimary,
+    marginTop: 4,
+  },
+  date: {
+    fontSize: 14,
+    color: colors.textMuted,
+    marginTop: 4,
+  },
+  weatherCard: {
+    margin: 16,
+    borderRadius: 20,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: colors.cardBorder,
   },
   card: {
+    margin: 16,
+    marginTop: 0,
+    borderRadius: 20,
+    padding: 24,
     backgroundColor: colors.card,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.cardBorder,
   },
   warningCard: {
-    borderColor: colors.warning,
+    borderColor: colors.warning + '66',
+    backgroundColor: colors.warning + '11',
   },
-  cardTitle: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: 10,
+  cardLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    letterSpacing: 2,
+    marginBottom: 12,
+    fontWeight: '600',
+  },
+  weatherMain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 16,
   },
   weatherEmoji: {
-    fontSize: 48,
-    marginBottom: 5,
+    fontSize: 56,
   },
   weatherTemp: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: 'bold',
     color: colors.textPrimary,
+    lineHeight: 60,
   },
   weatherDesc: {
     fontSize: 16,
     color: colors.textSecondary,
     textTransform: 'capitalize',
   },
-  weatherDetails: {
-    fontSize: 14,
+  weatherStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: colors.background + '88',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+  },
+  weatherStat: {
+    alignItems: 'center',
+  },
+  weatherStatValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+  },
+  weatherStatLabel: {
+    fontSize: 11,
     color: colors.textMuted,
-    marginTop: 8,
+    marginTop: 2,
   },
   city: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.primary,
-    marginTop: 5,
   },
   shouldGoOut: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     color: colors.textPrimary,
     marginBottom: 8,
@@ -198,30 +289,56 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.textSecondary,
     lineHeight: 22,
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  timeWindow: {
+  timeWindowBox: {
+    backgroundColor: colors.primary + '22',
+    borderRadius: 10,
+    padding: 10,
+  },
+  timeWindowLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    letterSpacing: 1,
+  },
+  timeWindowValue: {
     fontSize: 14,
     color: colors.primary,
+    fontWeight: '600',
+    marginTop: 2,
   },
   warningText: {
     fontSize: 14,
     color: colors.warning,
-    marginBottom: 5,
+    marginBottom: 6,
   },
-  energy: {
-    fontSize: 48,
+  energyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 16,
+  },
+  energyValue: {
+    fontSize: 36,
     fontWeight: 'bold',
+    width: 80,
   },
-  energyDesc: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: 5,
+  energyBar: {
+    flex: 1,
+    height: 8,
+    backgroundColor: colors.cardBorder,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  energyFill: {
+    height: '100%',
+    borderRadius: 4,
   },
   sleepRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 12,
+    justifyContent: 'center',
+    gap: 16,
   },
   sleepBtn: {
     backgroundColor: colors.primary,
@@ -239,13 +356,25 @@ const styles = StyleSheet.create({
   sleepHours: {
     color: colors.textPrimary,
     fontSize: 16,
-    marginHorizontal: 16,
+    fontWeight: '600',
   },
-  activity: {
-    fontSize: 16,
-    color: colors.textPrimary,
-    marginBottom: 8,
-    paddingLeft: 8,
+  activitiesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  activityChip: {
+    backgroundColor: colors.primary + '22',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: colors.primary + '44',
+  },
+  activityText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '500',
   },
   errorText: {
     color: colors.danger,
