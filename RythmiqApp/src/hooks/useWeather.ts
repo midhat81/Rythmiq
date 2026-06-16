@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { WeatherData } from '../services/weatherService';
+import { getWeather, WeatherData } from '../services/weatherService';
+import { config } from '../constants/config';
 
 export const useWeather = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -9,17 +10,8 @@ export const useWeather = () => {
   const fetchWeather = async () => {
     try {
       setLoading(true);
-      // Dummy data until API key activates
-      const dummyData: WeatherData = {
-        temp: 34,
-        feelsLike: 38,
-        humidity: 72,
-        description: 'partly cloudy',
-        windSpeed: 4.5,
-        icon: '02d',
-        city: 'Karachi',
-      };
-      setWeather(dummyData);
+      const data = await getWeather(config.defaultCity);
+      setWeather(data);
       setError(null);
     } catch (err) {
       setError('Failed to fetch weather');
