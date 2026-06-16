@@ -1,31 +1,31 @@
 export const colors = {
   // Background
-  background: '#1a0533',
-  card: '#2d1b4e',
-  cardBorder: '#3d2460',
+  background: '#050d1a',
+  card: '#0d1f3c',
+  cardBorder: '#1a3a5c',
 
   // Text
   textPrimary: '#ffffff',
-  textSecondary: '#d4b8f0',
-  textMuted: '#8a6aaa',
+  textSecondary: '#a8c0d6',
+  textMuted: '#4a6e8a',
 
-  // Accent - Purple style
-  primary: '#bf7fff',
-  secondary: '#e0aaff',
-  success: '#7ee8a2',
-  warning: '#ffd166',
-  danger: '#ff6b9d',
-  pink: '#ff79c6',
-  purple: '#9d4edd',
-  cyan: '#c77dff',
+  // Accents
+  primary: '#2d8eff',
+  secondary: '#00c6ff',
+  success: '#00e676',
+  warning: '#ffab00',
+  danger: '#ff5252',
+  pink: '#ff6b9d',
+  purple: '#7c6fff',
+  cyan: '#00c6ff',
 
   // Glass
-  glass: '#2d1b4e',
-  glassBorder: '#5a3a7a',
-  cardGlow: 'rgba(157,78,221,0.2)',
+  glass: '#0d1f3c',
+  glassBorder: '#1a3a5c',
+  cardGlow: 'rgba(45,142,255,0.15)',
 
   // Gradients
-  gradientStart: '#9d4edd',
-  gradientMid: '#c77dff',
-  gradientEnd: '#e0aaff',
+  gradientStart: '#2d8eff',
+  gradientMid: '#00c6ff',
+  gradientEnd: '#00e676',
 };

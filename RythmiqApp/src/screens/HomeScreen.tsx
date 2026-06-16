@@ -1,8 +1,18 @@
-import { StyleSheet, Text, View, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../constants/colors';
 import { useWeather } from '../hooks/useWeather';
 import { useAI } from '../hooks/useAI';
+
+const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const { weather, loading, error, refetch } = useWeather();
@@ -25,181 +35,220 @@ export default function HomeScreen() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning ☀️';
-    if (hour < 17) return 'Good Afternoon 🌤️';
-    return 'Good Evening 🌙';
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  const getGreetingEmoji = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return '☀️';
+    if (hour < 17) return '🌤️';
+    return '🌙';
   };
 
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
 
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.greeting}>{getGreeting()}</Text>
-          <Text style={styles.name}>Muhammad</Text>
-          <Text style={styles.date}>
-            {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </Text>
-        </View>
+        {/* HERO SECTION */}
+        <LinearGradient
+          colors={['#0a1628', '#051020', '#000000']}
+          style={styles.hero}
+        >
+          {/* Top Bar */}
+          <View style={styles.topBar}>
+            <View>
+              <Text style={styles.appName}>RYTHMIQ</Text>
+              <Text style={styles.topDate}>
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </Text>
+            </View>
+            <View style={styles.notifBtn}>
+              <Text style={styles.notifIcon}>🔔</Text>
+            </View>
+          </View>
 
-        {/* Weather + AI Row */}
-        <View style={styles.row}>
+          {/* Hero Greeting */}
+          <View style={styles.heroContent}>
+            <Text style={styles.greetingEmoji}>{getGreetingEmoji()}</Text>
+            <Text style={styles.greeting}>{getGreeting()},</Text>
+            <Text style={styles.heroName}>Muhammad</Text>
+            <Text style={styles.heroSubtitle}>
+              Your AI has analyzed today's conditions
+            </Text>
+          </View>
 
-          {/* Weather Card */}
-          <View style={styles.halfCard}>
-            <Text style={styles.cardLabel}>WEATHER</Text>
-            {loading ? (
-              <ActivityIndicator color={colors.primary} size="small" />
-            ) : weather ? (
-              <View>
-                <Text style={styles.weatherEmoji}>
+          {/* Hero Weather Big Display */}
+          {weather && (
+            <LinearGradient
+              colors={['rgba(45,142,255,0.2)', 'rgba(0,198,255,0.05)']}
+              style={styles.heroWeatherCard}
+            >
+              <View style={styles.heroWeatherLeft}>
+                <Text style={styles.heroWeatherEmoji}>
                   {getWeatherEmoji(weather.description)}
                 </Text>
-                <Text style={styles.weatherTemp}>{weather.temp}°</Text>
-                <Text style={styles.weatherDesc}>{weather.description}</Text>
-                <Text style={styles.city}>📍 {weather.city}</Text>
+                <Text style={styles.heroTemp}>{weather.temp}°</Text>
+                <Text style={styles.heroWeatherDesc}>{weather.description}</Text>
+                <Text style={styles.heroCity}>📍 {weather.city}</Text>
               </View>
-            ) : null}
-          </View>
-
-          {/* AI Decision Card */}
-          <View style={styles.halfCard}>
-            <Text style={styles.cardLabel}>AI SAYS</Text>
-            {decision ? (
-              <View>
-                <Text style={styles.shouldGoOutEmoji}>
-                  {decision.shouldGoOut ? '✅' : '🏠'}
-                </Text>
-                <Text style={[styles.shouldGoOutText, {
-                  color: decision.shouldGoOut ? colors.success : colors.danger
-                }]}>
-                  {decision.shouldGoOut ? 'Go Outside!' : 'Stay Indoors'}
-                </Text>
-                <Text style={styles.timeWindow}>
-                  ⏰ {decision.bestTimeWindow}
-                </Text>
-              </View>
-            ) : (
-              <ActivityIndicator color={colors.primary} size="small" />
-            )}
-          </View>
-
-        </View>
-
-        {/* Weather Stats */}
-        {weather && (
-          <View style={styles.statsCard}>
-            <View style={styles.statBox}>
-              <Text style={styles.statEmoji}>💧</Text>
-              <Text style={styles.statValue}>{weather.humidity}%</Text>
-              <Text style={styles.statLabel}>Humidity</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statBox}>
-              <Text style={styles.statEmoji}>💨</Text>
-              <Text style={styles.statValue}>{weather.windSpeed}</Text>
-              <Text style={styles.statLabel}>Wind m/s</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statBox}>
-              <Text style={styles.statEmoji}>🌡️</Text>
-              <Text style={styles.statValue}>{weather.feelsLike}°</Text>
-              <Text style={styles.statLabel}>Feels Like</Text>
-            </View>
-          </View>
-        )}
-
-        {/* Energy + Sleep Row */}
-        <View style={styles.row}>
-
-          {/* Energy Card */}
-          <View style={styles.halfCard}>
-            <Text style={styles.cardLabel}>ENERGY</Text>
-            {decision ? (
-              <View>
-                <Text style={[styles.energyValue, {
-                  color: getEnergyColor(decision.energyLevel)
-                }]}>
-                  {decision.energyLevel}%
-                </Text>
-                <View style={styles.energyBar}>
-                  <LinearGradient
-                    colors={[colors.primary, colors.purple]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={[styles.energyFill, {
-                      width: `${decision.energyLevel}%` as any
-                    }]}
-                  />
+              <View style={styles.heroWeatherRight}>
+                <View style={styles.heroStat}>
+                  <Text style={styles.heroStatValue}>{weather.humidity}%</Text>
+                  <Text style={styles.heroStatLabel}>💧 Humidity</Text>
                 </View>
-                <Text style={styles.energyLabel}>
-                  {decision.energyLevel >= 80 ? 'High Energy 🔥' :
-                    decision.energyLevel >= 50 ? 'Moderate ⚡' : 'Low Energy 😴'}
-                </Text>
+                <View style={styles.heroStat}>
+                  <Text style={styles.heroStatValue}>{weather.windSpeed}</Text>
+                  <Text style={styles.heroStatLabel}>💨 Wind</Text>
+                </View>
+                <View style={styles.heroStat}>
+                  <Text style={styles.heroStatValue}>{weather.feelsLike}°</Text>
+                  <Text style={styles.heroStatLabel}>🌡️ Feels</Text>
+                </View>
               </View>
-            ) : null}
+            </LinearGradient>
+          )}
+
+          {loading && (
+            <ActivityIndicator color={colors.primary} size="large" style={{ marginTop: 20 }} />
+          )}
+
+        </LinearGradient>
+
+        {/* AI DECISION BANNER */}
+        {decision && (
+          <LinearGradient
+            colors={decision.shouldGoOut
+              ? ['#00e676', '#00c6ff']
+              : ['#ff5252', '#ff6b9d']}
+            style={styles.aiBanner}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          >
+            <Text style={styles.aiBannerEmoji}>
+              {decision.shouldGoOut ? '✅' : '🏠'}
+            </Text>
+            <View style={styles.aiBannerText}>
+              <Text style={styles.aiBannerTitle}>
+                {decision.shouldGoOut ? 'Perfect Day Outside!' : 'Stay Indoors Today'}
+              </Text>
+              <Text style={styles.aiBannerSub}>{decision.advice}</Text>
+            </View>
+          </LinearGradient>
+        )}
+
+        {/* CARDS SECTION */}
+        <View style={styles.cardsSection}>
+
+          {/* Best Time Window */}
+          {decision && (
+            <View style={styles.timeCard}>
+              <LinearGradient
+                colors={['#2d8eff22', '#00c6ff11']}
+                style={styles.timeCardInner}
+              >
+                <Text style={styles.timeCardLabel}>⏰ BEST TIME WINDOW</Text>
+                <Text style={styles.timeCardValue}>{decision.bestTimeWindow}</Text>
+              </LinearGradient>
+            </View>
+          )}
+
+          {/* Energy + Sleep Row */}
+          <View style={styles.row}>
+
+            {/* Energy Card */}
+            <View style={styles.glassCard}>
+              <Text style={styles.glassCardLabel}>ENERGY</Text>
+              {decision && (
+                <>
+                  <Text style={[styles.glassCardBig, {
+                    color: getEnergyColor(decision.energyLevel)
+                  }]}>
+                    {decision.energyLevel}%
+                  </Text>
+                  <View style={styles.miniBar}>
+                    <LinearGradient
+                      colors={[colors.primary, colors.secondary]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={[styles.miniBarFill, {
+                        width: `${decision.energyLevel}%` as any
+                      }]}
+                    />
+                  </View>
+                  <Text style={styles.glassCardSub}>
+                    {decision.energyLevel >= 80 ? '🔥 High' :
+                      decision.energyLevel >= 50 ? '⚡ Medium' : '😴 Low'}
+                  </Text>
+                </>
+              )}
+            </View>
+
+            {/* Sleep Card */}
+            <View style={styles.glassCard}>
+              <Text style={styles.glassCardLabel}>SLEEP</Text>
+              <Text style={styles.glassCardBig}>
+                {sleepHours}h
+              </Text>
+              <Text style={styles.glassCardEmoji}>😴</Text>
+              <View style={styles.sleepBtns}>
+                <TouchableOpacity
+                  style={styles.sleepBtn}
+                  onPress={() => setSleepHours(Math.max(0, sleepHours - 1))}
+                >
+                  <Text style={styles.sleepBtnTxt}>−</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.sleepBtn}
+                  onPress={() => setSleepHours(Math.min(12, sleepHours + 1))}
+                >
+                  <Text style={styles.sleepBtnTxt}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
           </View>
 
-          {/* Sleep Card */}
-          <View style={styles.halfCard}>
-            <Text style={styles.cardLabel}>SLEEP</Text>
-            <Text style={styles.sleepValue}>😴</Text>
-            <Text style={styles.sleepHours}>{sleepHours}h</Text>
-            <View style={styles.sleepControls}>
-              <TouchableOpacity
-                style={styles.sleepBtn}
-                onPress={() => setSleepHours(Math.max(0, sleepHours - 1))}
-              >
-                <Text style={styles.sleepBtnText}>−</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.sleepBtn}
-                onPress={() => setSleepHours(Math.min(12, sleepHours + 1))}
-              >
-                <Text style={styles.sleepBtnText}>+</Text>
-              </TouchableOpacity>
+          {/* Activities Card */}
+          <View style={styles.activitiesCard}>
+            <Text style={styles.activitiesTitle}>🎯 Recommended For You</Text>
+            <View style={styles.activitiesRow}>
+              {decision?.activities.map((activity, index) => (
+                <LinearGradient
+                  key={index}
+                  colors={
+                    index === 0 ? ['#2d8eff', '#00c6ff'] :
+                    index === 1 ? ['#bf5af2', '#7c6fff'] :
+                    ['#00e676', '#00c6ff']
+                  }
+                  style={styles.activityCard}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                >
+                  <Text style={styles.activityText}>{activity}</Text>
+                </LinearGradient>
+              ))}
             </View>
           </View>
 
-        </View>
+          {/* Warnings */}
+          {decision && decision.warnings.length > 0 && (
+            <View style={styles.warningCard}>
+              <Text style={styles.warningTitle}>⚠️ Today's Warnings</Text>
+              {decision.warnings.map((warning, index) => (
+                <View key={index} style={styles.warningRow}>
+                  <Text style={styles.warningDot}>•</Text>
+                  <Text style={styles.warningText}>{warning}</Text>
+                </View>
+              ))}
+            </View>
+          )}
 
-        {/* Warnings */}
-        {decision && decision.warnings.length > 0 && (
-          <View style={[styles.fullCard, { borderColor: colors.warning + '44' }]}>
-            <Text style={styles.cardLabel}>⚠️ WARNINGS</Text>
-            {decision.warnings.map((warning, index) => (
-              <Text key={index} style={styles.warningText}>{warning}</Text>
-            ))}
-          </View>
-        )}
-
-        {/* Activities */}
-        <View style={styles.fullCard}>
-          <Text style={styles.cardLabel}>🎯 RECOMMENDED</Text>
-          <View style={styles.activitiesGrid}>
-            {decision?.activities.map((activity, index) => (
-              <View key={index} style={[styles.activityChip, {
-                borderColor: index === 0 ? colors.primary :
-                  index === 1 ? colors.purple : colors.success,
-              }]}>
-                <Text style={[styles.activityText, {
-                  color: index === 0 ? colors.primary :
-                    index === 1 ? colors.purple : colors.success,
-                }]}>{activity}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* AI Advice */}
-        <View style={styles.fullCard}>
-          <Text style={styles.cardLabel}>🧠 AI ADVICE</Text>
-          <Text style={styles.adviceText}>{decision?.advice}</Text>
         </View>
 
         <View style={{ height: 100 }} />
@@ -212,36 +261,172 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#000000',
   },
-  header: {
-    padding: 20,
+  hero: {
+    paddingBottom: 30,
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
     paddingTop: 50,
-    paddingBottom: 20,
+    paddingBottom: 10,
+  },
+  appName: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: colors.primary,
+    letterSpacing: 4,
+  },
+  topDate: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  notifBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.card,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  notifIcon: {
+    fontSize: 18,
+  },
+  heroContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+  },
+  greetingEmoji: {
+    fontSize: 36,
+    marginBottom: 8,
   },
   greeting: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.textMuted,
     letterSpacing: 0.5,
   },
-  name: {
-    fontSize: 28,
+  heroName: {
+    fontSize: 36,
     fontWeight: 'bold',
     color: colors.textPrimary,
     marginTop: 2,
+    marginBottom: 8,
   },
-  date: {
+  heroSubtitle: {
     fontSize: 13,
     color: colors.textMuted,
+  },
+  heroWeatherCard: {
+    marginHorizontal: 20,
+    borderRadius: 24,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.primary + '33',
+  },
+  heroWeatherLeft: {
+    flex: 1,
+  },
+  heroWeatherEmoji: {
+    fontSize: 48,
+    marginBottom: 4,
+  },
+  heroTemp: {
+    fontSize: 52,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+    lineHeight: 56,
+  },
+  heroWeatherDesc: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textTransform: 'capitalize',
     marginTop: 4,
+  },
+  heroCity: {
+    fontSize: 12,
+    color: colors.primary,
+    marginTop: 6,
+  },
+  heroWeatherRight: {
+    gap: 16,
+    alignItems: 'flex-end',
+  },
+  heroStat: {
+    alignItems: 'flex-end',
+  },
+  heroStatValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+  },
+  heroStatLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  aiBanner: {
+    marginHorizontal: 20,
+    marginTop: 16,
+    borderRadius: 20,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  aiBannerEmoji: {
+    fontSize: 32,
+  },
+  aiBannerText: {
+    flex: 1,
+  },
+  aiBannerTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  aiBannerSub: {
+    fontSize: 12,
+    color: '#00000099',
+    marginTop: 2,
+  },
+  cardsSection: {
+    padding: 20,
+    gap: 12,
+  },
+  timeCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.primary + '33',
+  },
+  timeCardInner: {
+    padding: 16,
+  },
+  timeCardLabel: {
+    fontSize: 10,
+    color: colors.textMuted,
+    letterSpacing: 2,
+    marginBottom: 6,
+  },
+  timeCardValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.primary,
   },
   row: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
     gap: 12,
-    marginBottom: 12,
   },
-  halfCard: {
+  glassCard: {
     flex: 1,
     backgroundColor: colors.card,
     borderRadius: 20,
@@ -249,162 +434,109 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.glassBorder,
   },
-  fullCard: {
-    marginHorizontal: 16,
-    marginBottom: 12,
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
-  },
-  statsCard: {
-    marginHorizontal: 16,
-    marginBottom: 12,
-    backgroundColor: colors.card,
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  cardLabel: {
+  glassCardLabel: {
     fontSize: 10,
     color: colors.textMuted,
     letterSpacing: 2,
-    marginBottom: 10,
+    marginBottom: 8,
     fontWeight: '600',
   },
-  weatherEmoji: {
-    fontSize: 36,
-    marginBottom: 6,
-  },
-  weatherTemp: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-  },
-  weatherDesc: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    textTransform: 'capitalize',
-    marginTop: 2,
-  },
-  city: {
-    fontSize: 11,
-    color: colors.primary,
-    marginTop: 6,
-  },
-  shouldGoOutEmoji: {
-    fontSize: 36,
-    marginBottom: 6,
-  },
-  shouldGoOutText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginBottom: 6,
-  },
-  timeWindow: {
-    fontSize: 10,
-    color: colors.textMuted,
-    lineHeight: 15,
-  },
-  statBox: {
-    alignItems: 'center',
-  },
-  statEmoji: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  statValue: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-  },
-  statLabel: {
-    fontSize: 10,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: colors.glassBorder,
-  },
-  energyValue: {
+  glassCardBig: {
     fontSize: 32,
     fontWeight: 'bold',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
-  energyBar: {
-    height: 6,
+  glassCardEmoji: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  glassCardSub: {
+    fontSize: 12,
+    color: colors.textMuted,
+  },
+  miniBar: {
+    height: 4,
     backgroundColor: colors.glassBorder,
-    borderRadius: 3,
+    borderRadius: 2,
     overflow: 'hidden',
     marginBottom: 8,
   },
-  energyFill: {
+  miniBarFill: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 2,
   },
-  energyLabel: {
-    fontSize: 11,
-    color: colors.textMuted,
-  },
-  sleepValue: {
-    fontSize: 32,
-    marginBottom: 2,
-  },
-  sleepHours: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: colors.textPrimary,
-    marginBottom: 10,
-  },
-  sleepControls: {
+  sleepBtns: {
     flexDirection: 'row',
     gap: 8,
   },
   sleepBtn: {
     backgroundColor: colors.glassBorder,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sleepBtnText: {
+  sleepBtnTxt: {
     color: colors.textPrimary,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  activitiesCard: {
+    backgroundColor: colors.card,
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  activitiesTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: colors.textPrimary,
+    marginBottom: 12,
+  },
+  activitiesRow: {
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  activityCard: {
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  activityText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  warningCard: {
+    backgroundColor: colors.warning + '15',
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.warning + '33',
+  },
+  warningTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: colors.warning,
+    marginBottom: 10,
+  },
+  warningRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 6,
+  },
+  warningDot: {
+    color: colors.warning,
+    fontSize: 16,
   },
   warningText: {
     fontSize: 13,
-    color: colors.warning,
-    marginBottom: 4,
-    lineHeight: 20,
-  },
-  activitiesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  activityChip: {
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderWidth: 1,
-    backgroundColor: colors.glassBorder + '44',
-  },
-  activityText: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  adviceText: {
-    fontSize: 14,
     color: colors.textSecondary,
-    lineHeight: 22,
+    flex: 1,
+    lineHeight: 20,
   },
 });
