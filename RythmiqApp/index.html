@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rythmiq</title>
+  <title>Rythmiq — AI Life Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -11,65 +12,284 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --blue: #2d8eff;
+      --cyan: #00c6ff;
+      --green: #00e676;
+      --bg: #030812;
+      --card: #0a1628;
+      --border: #1a3a5c;
+      --text: #ffffff;
+      --muted: #4a6e8a;
+      --secondary: #a8c0d6;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #080810;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* NAV */
+    nav {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 20px 80px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(3,8,18,0.8);
+      backdrop-filter: blur(20px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
     }
 
-    .desktop-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 60px;
-    }
-
-    .app-info {
-      color: white;
-      max-width: 300px;
-    }
-
-    .app-info h1 {
-      font-size: 42px;
-      font-weight: bold;
-      background: linear-gradient(135deg, #7c6fff, #00d4ff);
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 5px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
     }
 
-    .app-info p {
-      font-size: 16px;
-      color: #8888aa;
-      line-height: 1.6;
-      margin-bottom: 24px;
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--blue); }
+
+    .nav-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .nav-github {
+      color: var(--secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+
+    .nav-github:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .nav-btn {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 80px 80px;
+      gap: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(45,142,255,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -200px;
+      left: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0,230,118,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-left {
+      flex: 1;
+      max-width: 580px;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(45,142,255,0.1);
+      border: 1px solid rgba(45,142,255,0.25);
+      color: var(--blue);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 28px;
+      letter-spacing: 0.3px;
+    }
+
+    .hero-title {
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    }
+
+    .hero-title .gradient {
+      background: linear-gradient(135deg, var(--blue), var(--cyan), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 36px;
+      font-weight: 400;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 44px;
     }
 
     .badge {
-      display: inline-block;
-      background: #7c6fff22;
-      border: 1px solid #7c6fff44;
-      color: #7c6fff;
-      padding: 6px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--secondary);
+      padding: 8px 16px;
       border-radius: 20px;
       font-size: 13px;
-      margin-right: 8px;
-      margin-bottom: 8px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .badge:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: white;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(45,142,255,0.3);
+    }
+
+    .btn-secondary {
+      color: var(--blue);
+      border: 1px solid rgba(45,142,255,0.3);
+      background: transparent;
+      padding: 16px 28px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(45,142,255,0.1);
+      border-color: var(--blue);
+    }
+
+    /* PHONE */
+    .hero-right {
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .phone-wrapper {
+      position: relative;
+    }
+
+    .phone-glow {
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(circle, rgba(45,142,255,0.2) 0%, transparent 70%);
+      pointer-events: none;
     }
 
     .phone-frame {
       position: relative;
       width: 320px;
-      height: 600px;
-      background: #1a1a2e;
+      height: 693px;
+      background: #0d0d1a;
       border-radius: 50px;
-      border: 8px solid #2a2a4a;
+      border: 8px solid #1a1a3a;
       box-shadow:
-        0 0 0 2px #0a0a1a,
-        0 40px 80px rgba(124, 111, 255, 0.3),
-        inset 0 0 20px rgba(0,0,0,0.5);
+        0 0 0 1px #0a0a1a,
+        0 50px 100px rgba(45,142,255,0.25),
+        inset 0 0 40px rgba(0,0,0,0.6);
       overflow: hidden;
     }
 
@@ -78,9 +298,9 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
+      width: 110px;
       height: 28px;
-      background: #1a1a2e;
+      background: #0d0d1a;
       border-radius: 0 0 20px 20px;
       z-index: 10;
     }
@@ -88,73 +308,439 @@
     .phone-screen {
       width: 100%;
       height: 100%;
-      border-radius: 42px;
-      overflow: hidden;
       border: none;
+      border-radius: 42px;
     }
 
-    .phone-button {
+    .phone-btn-right {
       position: absolute;
-      right: -10px;
+      right: -9px;
       top: 120px;
-      width: 4px;
+      width: 3px;
       height: 60px;
-      background: #2a2a4a;
+      background: #1a1a3a;
       border-radius: 2px;
     }
 
-    .phone-button-left1 {
+    .phone-btn-left1 {
       position: absolute;
-      left: -10px;
+      left: -9px;
       top: 100px;
-      width: 4px;
-      height: 40px;
-      background: #2a2a4a;
+      width: 3px;
+      height: 35px;
+      background: #1a1a3a;
       border-radius: 2px;
     }
 
-    .phone-button-left2 {
+    .phone-btn-left2 {
       position: absolute;
-      left: -10px;
-      top: 160px;
-      width: 4px;
-      height: 40px;
-      background: #2a2a4a;
+      left: -9px;
+      top: 150px;
+      width: 3px;
+      height: 55px;
+      background: #1a1a3a;
       border-radius: 2px;
     }
+
+    /* STATS */
+    .stats {
+      padding: 60px 80px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, #0a1628, #030812);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 52px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -2px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    /* FEATURES */
+    .features {
+      padding: 100px 80px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: 3px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 48px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 12px;
+      letter-spacing: -1.5px;
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(45,142,255,0.3);
+      box-shadow: 0 20px 40px rgba(45,142,255,0.1);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(45,142,255,0.1);
+      border: 1px solid rgba(45,142,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* HOW IT WORKS */
+    .how {
+      padding: 100px 80px;
+      background: linear-gradient(135deg, #0a1628, #030812);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .step {
+      text-align: center;
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 auto 20px;
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* CTA */
+    .cta {
+      padding: 120px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(45,142,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-size: 56px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      letter-spacing: -2px;
+    }
+
+    .cta-subtitle {
+      font-size: 18px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 80px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--blue); }
   </style>
 </head>
 <body>
 
-  <div class="desktop-wrapper">
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">RYTHMIQ</div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#app">Demo</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="https://github.com/midhat81/Rythmiq" target="_blank" class="nav-github">⭐ GitHub</a>
+      <a href="#app" class="nav-btn">🚀 Try Demo</a>
+    </div>
+  </nav>
 
-    <!-- App Info -->
-    <div class="app-info">
-      <h1>Rythmiq</h1>
-      <p>Your personal AI life assistant. Weather-aware, energy-smart, and always one step ahead.</p>
-      <div>
-        <span class="badge">🧠 AI Powered</span>
+  <!-- HERO -->
+  <section class="hero" id="app">
+    <div class="hero-left">
+      <div class="hero-badge">🧠 Proactive AI Life Assistant</div>
+      <h1 class="hero-title">
+        Live Life On<br>
+        Your <span class="gradient">Rhythm</span>
+      </h1>
+      <p class="hero-subtitle">
+        Rythmiq silently analyzes your weather, sleep, and energy — then tells you exactly what to do, when to do it, and how to feel your best. No typing required.
+      </p>
+      <div class="hero-badges">
         <span class="badge">⛅ Weather Smart</span>
         <span class="badge">🔋 Energy Tracker</span>
-        <span class="badge">📅 Daily Planner</span>
         <span class="badge">🧬 Weather DNA</span>
+        <span class="badge">🥾 Hiking Guide</span>
+        <span class="badge">📅 Daily Planner</span>
+        <span class="badge">🔔 Smart Alerts</span>
+        <span class="badge">🧠 AI Insights</span>
+      </div>
+      <div class="hero-btns">
+        <a href="#features" class="btn-primary">🚀 Explore Features</a>
+        <a href="https://github.com/midhat81/Rythmiq" target="_blank" class="btn-secondary">View on GitHub →</a>
       </div>
     </div>
 
-    <!-- Phone Frame -->
-    <div class="phone-frame">
-      <div class="phone-notch"></div>
-      <div class="phone-button"></div>
-      <div class="phone-button-left1"></div>
-      <div class="phone-button-left2"></div>
-      <iframe
-        class="phone-screen"
-        src="http://localhost:8081"
-        title="Rythmiq App"
-      ></iframe>
+    <!-- Phone -->
+    <div class="hero-right">
+      <div class="phone-wrapper">
+        <div class="phone-glow"></div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-btn-right"></div>
+          <div class="phone-btn-left1"></div>
+          <div class="phone-btn-left2"></div>
+          <iframe
+            class="phone-screen"
+            src="http://localhost:8081"
+            title="Rythmiq App"
+          ></iframe>
+        </div>
+      </div>
     </div>
+  </section>
 
-  </div>
+  <!-- STATS -->
+  <section class="stats">
+    <div>
+      <div class="stat-value">6</div>
+      <div class="stat-label">App Screens</div>
+    </div>
+    <div>
+      <div class="stat-value">24/7</div>
+      <div class="stat-label">AI Monitoring</div>
+    </div>
+    <div>
+      <div class="stat-value">100%</div>
+      <div class="stat-label">Personalized</div>
+    </div>
+    <div>
+      <div class="stat-value">0</div>
+      <div class="stat-label">Typing Needed</div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-label">FEATURES</div>
+    <h2 class="section-title">Everything You Need</h2>
+    <p class="section-subtitle">Powered by AI, designed for your life</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⛅</div>
+        <div class="feature-title">Weather Intelligence</div>
+        <div class="feature-desc">Real-time weather analysis tells you exactly when to go out, hike, or stay indoors based on temperature, humidity, and wind.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <div class="feature-title">AI Decision Engine</div>
+        <div class="feature-desc">AI silently watches your data and proactively tells you what to do — no typing, no asking. Just open and see.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔋</div>
+        <div class="feature-title">Energy Tracker</div>
+        <div class="feature-desc">Calculates your daily energy budget based on sleep quality, weather conditions, and recent activity patterns.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧬</div>
+        <div class="feature-title">Weather DNA</div>
+        <div class="feature-desc">AI learns your unique weather preferences over 30 days and builds a personal profile — your Weather DNA.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🥾</div>
+        <div class="feature-title">Hiking Guide</div>
+        <div class="feature-desc">AI recommends the best trails based on your fitness level, today's conditions, and optimal hiking windows.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <div class="feature-title">Daily Planner</div>
+        <div class="feature-desc">Smart morning and evening plans generated by AI — with timeline view and task completion tracking.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <div class="section-label">HOW IT WORKS</div>
+    <h2 class="section-title">Simple. Smart. Proactive.</h2>
+    <p class="section-subtitle">Rythmiq works silently in the background</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-title">AI Collects Data</div>
+        <div class="step-desc">Rythmiq silently monitors your weather, location, sleep hours, and energy level every 30 minutes.</div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-title">AI Analyzes Everything</div>
+        <div class="step-desc">The decision engine combines all data points to understand your current state and predict your best actions.</div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-title">You Just Live Better</div>
+        <div class="step-desc">Open the app and your personalized plan is ready. No typing. No asking. Just smart guidance waiting for you.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2 class="cta-title">Ready to find your<br><span style="background: linear-gradient(135deg, #2d8eff, #00c6ff, #00e676); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Rhythm?</span></h2>
+    <p class="cta-subtitle">Join the future of AI-powered personal wellness</p>
+    <div style="display: flex; gap: 14px; justify-content: center;">
+      <a href="https://github.com/midhat81/Rythmiq" target="_blank" class="btn-primary">⭐ Star on GitHub</a>
+      <a href="#app" class="btn-secondary">View Demo →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">RYTHMIQ</div>
+    <div class="footer-text">Built with ❤️ by Muhammad Midhat © 2026</div>
+    <div class="footer-links">
+      <a href="https://github.com/midhat81/Rythmiq" target="_blank">GitHub</a>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+    </div>
+  </footer>
 
 </body>
 </html>
