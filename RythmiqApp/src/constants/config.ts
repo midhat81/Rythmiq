@@ -12,7 +12,7 @@ export const config = {
 
   
     // Settings
-    defaultCity: 'Karachi',
+    defaultCity: 'Islamabad',
     temperatureUnit: 'metric',
   
     // Timing
