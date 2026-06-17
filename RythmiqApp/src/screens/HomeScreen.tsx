@@ -197,19 +197,21 @@ export default function HomeScreen() {
               </Text>
               <Text style={styles.glassCardEmoji}>😴</Text>
               <View style={styles.sleepBtns}>
-                <TouchableOpacity
-                  style={styles.sleepBtn}
-                  onPress={() => setSleepHours(Math.max(0, sleepHours - 1))}
-                >
-                  <Text style={styles.sleepBtnTxt}>−</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.sleepBtn}
-                  onPress={() => setSleepHours(Math.min(12, sleepHours + 1))}
-                >
-                  <Text style={styles.sleepBtnTxt}>+</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.sleepBtn}
+                activeOpacity={0.7}
+                onPress={() => setSleepHours(Math.max(0, sleepHours - 1))}
+              >
+                <Text style={styles.sleepBtnTxt}>−</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.sleepBtn}
+                activeOpacity={0.7}
+                onPress={() => setSleepHours(Math.min(12, sleepHours + 1))}
+              >
+                <Text style={styles.sleepBtnTxt}>+</Text>
+              </TouchableOpacity>
+            </View>
             </View>
 
           </View>
